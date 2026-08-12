@@ -1,0 +1,128 @@
+[package]
+name = "ps5-emulator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# ============================================
+# CORE
+# ============================================
+log = "0.4"
+env_logger = "0.10"
+crossbeam = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+walkdir = "2.4"
+
+# ============================================
+# INTERFACE GRÁFICA (UI)
+# ============================================
+egui = "0.27"
+eframe = "0.27"
+egui_extras = "0.27"
+egui_phosphor = "0.1"
+egui_image = "0.3"
+image = "0.24"
+
+# ============================================
+# ÁUDIO 🎵
+# ============================================
+rodio = "0.17"                      # Reprodução de áudio
+cpal = "0.15"                       # Áudio de baixo nível
+hound = "3.5"                       # Leitura de WAV
+symphonia = "0.5"                   # Decodificação (MP3, FLAC, etc)
+rubato = "0.13"                     # Processamento de áudio
+audio = "0.2"                       # Utilitários de áudio
+
+# ============================================
+# GPU / RENDERIZAÇÃO 🖥️
+# ============================================
+wgpu = "0.19"                       # Renderização moderna
+winit = "0.29"                      # Janelas e eventos
+pollster = "0.3"                    # Bloqueio de futuro
+bytemuck = "1.14"                   # Bytes seguros
+cgmath = "0.18"                     # Matemática 3D
+
+# ============================================
+# GAMEPAD
+# ============================================
+gilrs = "0.10"
+
+# ============================================
+# PERFORMANCE (Otimização)
+# ============================================
+rayon = "1.8"                       # Paralelismo
+parking_lot = "0.12"               # Mutex rápido
+
+# ============================================
+# SISTEMA DE ARQUIVOS
+# ============================================
+dirs = "5.0"                        # Pastas do sistema
+tempfile = "3.8"                    # Arquivos temporários
+zip = "0.6"                         # Compactação
+flate2 = "1.0"                      # Descompressão
+
+# ============================================
+# UTILITÁRIOS
+# ============================================
+chrono = "0.4"                      # Datas e horas
+rand = "0.8"                        # Números aleatórios
+thiserror = "1.0"                   # Erros
+anyhow = "1.0"                      # Erros fáceis
+
+# ============================================
+# PLATAFORMAS ESPECÍFICAS
+# ============================================
+[target.'cfg(target_os="android")'.dependencies]
+jni = "0.21"
+android_logger = "0.13"
+
+[target.'cfg(target_arch="wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+web-sys = "0.3"
+js-sys = "0.3"
+
+[target.'cfg(target_os="windows")'.dependencies]
+winapi = { version = "0.3", features = ["winuser", "windef"] }
+
+[target.'cfg(target_os="linux")'.dependencies]
+alsa = "0.9"
+
+# ============================================
+# PERFIS DE BUILD
+# ============================================
+[profile.release]
+lto = true                          # Otimização máxima
+strip = true                        # Remove debug symbols
+opt-level = 3                       # Máxima otimização
+codegen-units = 1                   # Melhor otimização
+panic = "abort"                     # Menor binário
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.bench]
+lto = true
+opt-level = 3
+
+# ============================================
+# FEATURES
+# ============================================
+[features]
+default = ["desktop"]
+desktop = []
+android = ["jni", "android_logger"]
+wasm = ["wasm-bindgen", "web-sys", "js-sys"]
+full = ["desktop", "android", "wasm"]
+
+# ============================================
+# PACKAGE METADATA
+# ============================================
+[package.metadata]
+description = "PS5 Emulator - Rode jogos PS5 com qualidade original"
+repository = "https://github.com/seu-usuario/ps5-emulator"
+license = "MIT"
+keywords = ["ps5", "emulator", "rust", "gaming", "playstation"]
+categories = ["emulators", "games"]
