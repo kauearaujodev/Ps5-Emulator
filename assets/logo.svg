@@ -1,32 +1,130 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-    <!-- Fundo PS5 -->
-    <rect width="512" height="512" rx="80" fill="#003087"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+    <!-- ==========================================
+    FUNDO COM GRADIENTE PS5
+    ========================================== -->
+    <defs>
+        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#003087;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#001a4d;stop-opacity:1" />
+        </linearGradient>
+        
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+        </linearGradient>
+        
+        <linearGradient id="psGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.95" />
+            <stop offset="100%" style="stop-color:#c0c0c0;stop-opacity:0.95" />
+        </linearGradient>
+        
+        <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        
+        <filter id="shadow">
+            <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.5"/>
+        </filter>
+    </defs>
+
+    <!-- ==========================================
+    FUNDO
+    ========================================== -->
+    <rect width="800" height="800" rx="120" fill="url(#bgGradient)"/>
     
-    <!-- Texto ULTIMATE EDITION -->
-    <text x="256" y="200" font-family="Arial" font-size="60" font-weight="bold" 
-          fill="#FFFFFF" text-anchor="middle" letter-spacing="8">
+    <!-- Brilho superior -->
+    <ellipse cx="400" cy="150" rx="350" ry="100" fill="rgba(255,255,255,0.05)"/>
+
+    <!-- ==========================================
+    CÍRCULO PS5
+    ========================================== -->
+    <circle cx="400" cy="400" r="320" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+    <circle cx="400" cy="400" r="300" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+
+    <!-- ==========================================
+    TÍTULO ULTIMATE EDITION
+    ========================================== -->
+    <text x="400" y="280" font-family="'Arial Black', Arial, sans-serif" 
+          font-size="90" font-weight="900" fill="#FFFFFF" 
+          text-anchor="middle" letter-spacing="12" filter="url(#shadow)">
         ULTIMATE
     </text>
     
-    <!-- Texto EDITION -->
-    <text x="256" y="280" font-family="Arial" font-size="40" font-weight="bold" 
-          fill="#0060A0" text-anchor="middle" letter-spacing="12">
+    <!-- Sombra do ULTIMATE -->
+    <text x="400" y="280" font-family="'Arial Black', Arial, sans-serif" 
+          font-size="90" font-weight="900" fill="rgba(0,0,0,0.3)" 
+          text-anchor="middle" letter-spacing="12" 
+          transform="translate(4, 4)">
+        ULTIMATE
+    </text>
+
+    <!-- ==========================================
+    SUBTÍTULO EDITION
+    ========================================== -->
+    <text x="400" y="360" font-family="'Arial Black', Arial, sans-serif" 
+          font-size="55" font-weight="bold" fill="url(#goldGradient)" 
+          text-anchor="middle" letter-spacing="18" filter="url(#glow)">
         EDITION
     </text>
-    
-    <!-- Símbolo PS5 -->
-    <circle cx="256" cy="256" r="180" fill="none" stroke="#FFFFFF" stroke-width="8" opacity="0.3"/>
-    
-    <!-- Logo PS -->
-    <text x="156" y="410" font-family="Arial" font-size="180" font-weight="bold" 
-          fill="#FFFFFF" text-anchor="middle" opacity="0.9">
+
+    <!-- ==========================================
+    SÍMBOLO PS (PlayStation)
+    ========================================== -->
+    <text x="400" y="620" font-family="'Arial Black', Arial, sans-serif" 
+          font-size="200" font-weight="900" fill="url(#psGradient)" 
+          text-anchor="middle" letter-spacing="-10" opacity="0.9">
         PS
     </text>
+
+    <!-- ==========================================
+    DETALHES DOS BOTÕES (Estilo PlayStation)
+    ========================================== -->
+    <!-- Triângulo (Amarelo) -->
+    <polygon points="280,480 310,450 340,480" fill="#FFD700" opacity="0.7"/>
+    <text x="310" y="530" font-family="Arial" font-size="20" fill="#FFD700" text-anchor="middle" opacity="0.7">▲</text>
     
-    <!-- Detalhes de brilho -->
-    <ellipse cx="120" cy="80" rx="120" ry="40" fill="rgba(255,255,255,0.08)"/>
+    <!-- Círculo (Vermelho) -->
+    <circle cx="480" cy="460" r="25" fill="#FF0000" opacity="0.7"/>
+    <text x="480" y="535" font-family="Arial" font-size="20" fill="#FF0000" text-anchor="middle" opacity="0.7">●</text>
     
-    <!-- Estrela de destaque -->
-    <polygon points="400,80 410,110 440,110 415,130 425,160 400,140 375,160 385,130 360,110 390,110" 
-             fill="#FFD700" opacity="0.6"/>
+    <!-- Cross (Azul) -->
+    <text x="400" y="530" font-family="Arial" font-size="24" fill="#0000FF" text-anchor="middle" opacity="0.7">✕</text>
+    
+    <!-- Quadrado (Rosa) -->
+    <rect x="320" y="460" width="30" height="30" fill="#FF69B4" opacity="0.7" rx="4"/>
+    <text x="335" y="535" font-family="Arial" font-size="20" fill="#FF69B4" text-anchor="middle" opacity="0.7">■</text>
+
+    <!-- ==========================================
+    DETALHES DE BRILHO
+    ========================================== -->
+    <ellipse cx="200" cy="100" rx="150" ry="30" fill="rgba(255,255,255,0.06)"/>
+    <ellipse cx="600" cy="120" rx="100" ry="20" fill="rgba(255,255,255,0.04)"/>
+
+    <!-- ==========================================
+    ESTRELAS DE DESTAQUE
+    ========================================== -->
+    <polygon points="680,200 690,230 720,230 695,250 705,280 680,260 655,280 665,250 640,230 670,230" 
+             fill="#FFD700" opacity="0.5"/>
+    
+    <polygon points="120,200 128,225 155,225 133,242 142,268 120,252 98,268 107,242 85,225 112,225" 
+             fill="#FFD700" opacity="0.4"/>
+
+    <!-- ==========================================
+    LINHA DECORATIVA
+    ========================================== -->
+    <line x1="150" y1="400" x2="650" y2="400" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+    <line x1="200" y1="420" x2="600" y2="420" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+    <!-- ==========================================
+    VERSÃO
+    ========================================== -->
+    <text x="400" y="740" font-family="Arial" font-size="20" 
+          fill="rgba(255,255,255,0.2)" text-anchor="middle" letter-spacing="4">
+        v1.0.0
+    </text>
 </svg>
