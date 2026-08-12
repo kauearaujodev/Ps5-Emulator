@@ -1,0 +1,212 @@
+name: Android APK Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Permite build manual
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      # ============================================
+      # 1. CHECKOUT DO CÓDIGO
+      # ============================================
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ============================================
+      # 2. SETUP JAVA (Android SDK)
+      # ============================================
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # ============================================
+      # 3. SETUP ANDROID SDK
+      # ============================================
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platform-tools
+            platforms;android-33
+            build-tools;33.0.0
+            ndk;25.1.8937393
+            cmake;3.22.1
+
+      # ============================================
+      # 4. SETUP RUST PARA ANDROID
+      # ============================================
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: |
+            aarch64-linux-android
+            armv7-linux-androideabi
+            x86_64-linux-android
+
+      # ============================================
+      # 5. CONFIGURAR VARIÁVEIS DE AMBIENTE
+      # ============================================
+      - name: Set environment variables
+        run: |
+          echo "ANDROID_HOME=${{ env.ANDROID_HOME }}" >> $GITHUB_ENV
+          echo "ANDROID_NDK=${{ env.ANDROID_HOME }}/ndk/25.1.8937393" >> $GITHUB_ENV
+          echo "JAVA_HOME=${{ env.JAVA_HOME }}" >> $GITHUB_ENV
+
+      # ============================================
+      # 6. INSTALAR CARGO-APK
+      # ============================================
+      - name: Install cargo-apk
+        run: |
+          cargo install cargo-apk
+          cargo install cargo-ndk
+
+      # ============================================
+      # 7. CRIAR ESTRUTURA ANDROID
+      # ============================================
+      - name: Create Android structure
+        run: |
+          mkdir -p android/app/src/main
+          mkdir -p android/app/build
+          
+          # Criar AndroidManifest.xml
+          cat > android/app/src/main/AndroidManifest.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+              package="com.ps5.emulator"
+              android:versionCode="1"
+              android:versionName="1.0.0">
+          
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+              <uses-permission android:name="android.permission.VIBRATE" />
+              <uses-permission android:name="android.permission.WAKE_LOCK" />
+              <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+              <uses-permission android:name="android.permission.BLUETOOTH" />
+              
+              <uses-feature android:name="android.hardware.touchscreen" android:required="true" />
+              <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+              <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+              
+              <application
+                  android:allowBackup="true"
+                  android:label="PS5 Emulator"
+                  android:theme="@style/Theme.AppCompat.Light"
+                  android:icon="@mipmap/ic_launcher"
+                  android:largeHeap="true">
+                  
+                  <activity android:name=".MainActivity"
+                      android:configChanges="orientation|screenSize|keyboardHidden"
+                      android:screenOrientation="sensorLandscape">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+      # ============================================
+      # 8. CRIAR build.gradle
+      # ============================================
+      - name: Create build.gradle
+        run: |
+          cat > android/app/build.gradle << 'EOF'
+          apply plugin: 'com.android.application'
+          
+          android {
+              namespace 'com.ps5.emulator'
+              compileSdk 33
+              
+              defaultConfig {
+                  applicationId 'com.ps5.emulator'
+                  minSdk 26
+                  targetSdk 33
+                  versionCode 1
+                  versionName '1.0.0'
+                  
+                  ndk {
+                      abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+                  }
+                  
+                  externalNativeBuild {
+                      cmake {
+                          cppFlags '-std=c++17'
+                      }
+                  }
+              }
+              
+              buildTypes {
+                  release {
+                      minifyEnabled true
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+                  }
+              }
+          }
+          
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+          }
+          EOF
+
+      # ============================================
+      # 9. BUILD DO APK
+      # ============================================
+      - name: Build APK with cargo-apk
+        run: |
+          cargo apk build --release --target aarch64-linux-android --features android
+
+      # ============================================
+      # 10. LOCALIZAR O APK
+      # ============================================
+      - name: Find APK
+        run: |
+          find . -name "*.apk" -type f
+          APK_PATH=$(find target -name "*.apk" -type f | head -n 1)
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+          
+          if [ -z "$APK_PATH" ]; then
+            echo "❌ APK não encontrado!"
+            exit 1
+          fi
+
+      # ============================================
+      # 11. UPLOAD DO APK COMO ARTIFACT
+      # ============================================
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps5-emulator-android
+          path: ${{ env.APK_PATH }}
+          retention-days: 30
+
+      # ============================================
+      # 12. UPLOAD PARA RELEASE (se for tag)
+      # ============================================
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.APK_PATH }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
