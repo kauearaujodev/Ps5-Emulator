@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # ============================================
+  # BUILD WINDOWS
+  # ============================================
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: x86_64-pc-windows-msvc
+      - name: Build
+        run: cargo build --release --target x86_64-pc-windows-msvc
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps5-emulator-windows
+          path: target/x86_64-pc-windows-msvc/release/ps5-emulator.exe
+
+  # ============================================
+  # BUILD LINUX
+  # ============================================
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Build
+        run: cargo build --release
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps5-emulator-linux
+          path: target/release/ps5-emulator
+
+  # ============================================
+  # BUILD ANDROID (APK)
+  # ============================================
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Rust Android targets
+        run: |
+          rustup target add aarch64-linux-android
+          rustup target add armv7-linux-androideabi
+      - name: Build Android
+        run: |
+          cargo build --release --target aarch64-linux-android --features android
+          cargo build --release --target armv7-linux-androideabi --features android
+      - name: Build APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps5-emulator.apk
+          path: android/app/build/outputs/apk/release/*.apk
+
+  # ============================================
+  # BUILD CHROMEBOOK (WASM)
+  # ============================================
+  build-chromebook:
+    name: Build Chromebook (WASM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install wasm target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Install wasm-bindgen
+        run: cargo install wasm-bindgen-cli
+      - name: Build WASM
+        run: |
+          cargo build --release --target wasm32-unknown-unknown --features wasm
+          wasm-bindgen target/wasm32-unknown-unknown/release/ps5-emulator.wasm --out-dir web
+      - name: Upload Chrome App
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps5-emulator-chromebook
+          path: web/
