@@ -2,11 +2,22 @@
 name = "ps5-emulator"
 version = "0.1.0"
 edition = "2021"
+authors = ["Seu Nome <seu@email.com>"]
+description = "PS5 Emulator Ultimate Edition - Rode jogos PS5 com qualidade original"
+repository = "https://github.com/seu-usuario/ps5-emulator"
+license = "MIT"
+keywords = ["ps5", "emulator", "rust", "gaming", "playstation"]
+categories = ["emulators", "games"]
 
+[package.metadata]
+documentation = "https://github.com/seu-usuario/ps5-emulator#readme"
+
+# ============================================
+# DEPENDÊNCIAS
+# ============================================
 [dependencies]
-# ============================================
-# CORE
-# ============================================
+
+# ========== CORE ==========
 log = "0.4"
 env_logger = "0.10"
 crossbeam = "0.8"
@@ -14,10 +25,10 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 toml = "0.8"
 walkdir = "2.4"
+thiserror = "1.0"
+anyhow = "1.0"
 
-# ============================================
-# INTERFACE GRÁFICA (UI)
-# ============================================
+# ========== INTERFACE GRÁFICA ==========
 egui = "0.27"
 eframe = "0.27"
 egui_extras = "0.27"
@@ -25,9 +36,7 @@ egui_phosphor = "0.1"
 egui_image = "0.3"
 image = "0.24"
 
-# ============================================
-# ÁUDIO 🎵
-# ============================================
+# ========== ÁUDIO ==========
 rodio = "0.17"                      # Reprodução de áudio
 cpal = "0.15"                       # Áudio de baixo nível
 hound = "3.5"                       # Leitura de WAV
@@ -35,81 +44,95 @@ symphonia = "0.5"                   # Decodificação (MP3, FLAC, etc)
 rubato = "0.13"                     # Processamento de áudio
 audio = "0.2"                       # Utilitários de áudio
 
-# ============================================
-# GPU / RENDERIZAÇÃO 🖥️
-# ============================================
+# ========== GPU / RENDERIZAÇÃO ==========
 wgpu = "0.19"                       # Renderização moderna
 winit = "0.29"                      # Janelas e eventos
 pollster = "0.3"                    # Bloqueio de futuro
 bytemuck = "1.14"                   # Bytes seguros
 cgmath = "0.18"                     # Matemática 3D
 
-# ============================================
-# GAMEPAD
-# ============================================
+# ========== GAMEPAD ==========
 gilrs = "0.10"
 
-# ============================================
-# PERFORMANCE (Otimização)
-# ============================================
+# ========== PERFORMANCE (Otimização) ==========
 rayon = "1.8"                       # Paralelismo
-parking_lot = "0.12"               # Mutex rápido
+parking_lot = "0.12"                # Mutex rápido
 
-# ============================================
-# SISTEMA DE ARQUIVOS
-# ============================================
+# ========== SISTEMA DE ARQUIVOS ==========
 dirs = "5.0"                        # Pastas do sistema
 tempfile = "3.8"                    # Arquivos temporários
 zip = "0.6"                         # Compactação
 flate2 = "1.0"                      # Descompressão
 
-# ============================================
-# UTILITÁRIOS
-# ============================================
+# ========== UTILITÁRIOS ==========
 chrono = "0.4"                      # Datas e horas
 rand = "0.8"                        # Números aleatórios
-thiserror = "1.0"                   # Erros
-anyhow = "1.0"                      # Erros fáceis
 
 # ============================================
 # PLATAFORMAS ESPECÍFICAS
 # ============================================
+
+# ANDROID
 [target.'cfg(target_os="android")'.dependencies]
 jni = "0.21"
 android_logger = "0.13"
 
+# WASM (Web/Chromebook)
 [target.'cfg(target_arch="wasm32")'.dependencies]
 wasm-bindgen = "0.2"
 web-sys = "0.3"
 js-sys = "0.3"
 
+# WINDOWS
 [target.'cfg(target_os="windows")'.dependencies]
-winapi = { version = "0.3", features = ["winuser", "windef"] }
+winapi = { version = "0.3", features = ["winuser", "windef", "winsock2", "shellapi"] }
 
+# LINUX
 [target.'cfg(target_os="linux")'.dependencies]
 alsa = "0.9"
+pulse = "0.3"
+
+# MACOS
+[target.'cfg(target_os="macos")'.dependencies]
+coreaudio-rs = "0.11"
 
 # ============================================
-# PERFIS DE BUILD
+# BUILD PROFILES
 # ============================================
+
+[profile.dev]
+opt-level = 0
+debug = true
+rpath = false
+lto = false
+debug-assertions = true
+overflow-checks = true
+incremental = true
+
 [profile.release]
 lto = true                          # Otimização máxima
 strip = true                        # Remove debug symbols
 opt-level = 3                       # Máxima otimização
 codegen-units = 1                   # Melhor otimização
 panic = "abort"                     # Menor binário
-
-[profile.dev]
-opt-level = 0
-debug = true
+overflow-checks = false             # Remove verificações de overflow
+debug-assertions = false            # Remove asserts de debug
+incremental = false                 # Desativa compilação incremental
 
 [profile.bench]
 lto = true
 opt-level = 3
+codegen-units = 1
+panic = "abort"
+
+[profile.test]
+opt-level = 1
+debug = true
 
 # ============================================
 # FEATURES
 # ============================================
+
 [features]
 default = ["desktop"]
 desktop = []
@@ -117,12 +140,100 @@ android = ["jni", "android_logger"]
 wasm = ["wasm-bindgen", "web-sys", "js-sys"]
 full = ["desktop", "android", "wasm"]
 
+# Features de performance
+perf_high = ["rayon", "parking_lot"]
+perf_low = []
+
+# Features de áudio
+audio_high = ["rodio", "cpal", "symphonia"]
+audio_low = []
+
+# Features de GPU
+gpu_high = ["wgpu", "winit"]
+gpu_low = []
+
 # ============================================
-# PACKAGE METADATA
+# TARGETS
 # ============================================
-[package.metadata]
-description = "PS5 Emulator - Rode jogos PS5 com qualidade original"
-repository = "https://github.com/seu-usuario/ps5-emulator"
-license = "MIT"
-keywords = ["ps5", "emulator", "rust", "gaming", "playstation"]
-categories = ["emulators", "games"]
+
+[[bin]]
+name = "ps5-emulator"
+path = "src/main.rs"
+
+[lib]
+name = "ps5_emulator"
+path = "src/lib.rs"
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+# ============================================
+# PATCHES (para compatibilidade)
+# ============================================
+
+[patch.crates-io]
+# Se precisar de patches específicos, coloque aqui
+
+# ============================================
+# EXEMPLOS
+# ============================================
+
+[[example]]
+name = "demo"
+path = "examples/demo.rs"
+
+[[example]]
+name = "audio_test"
+path = "examples/audio_test.rs"
+
+[[example]]
+name = "gpu_test"
+path = "examples/gpu_test.rs"
+
+# ============================================
+# TESTES
+# ============================================
+
+[[test]]
+name = "cpu_test"
+path = "tests/cpu_test.rs"
+
+[[test]]
+name = "audio_test"
+path = "tests/audio_test.rs"
+
+[[test]]
+name = "memory_test"
+path = "tests/memory_test.rs"
+
+# ============================================
+# BENCHMARKS
+# ============================================
+
+[[bench]]
+name = "cpu_bench"
+path = "benches/cpu_bench.rs"
+harness = false
+
+[[bench]]
+name = "memory_bench"
+path = "benches/memory_bench.rs"
+harness = false
+
+# ============================================
+# METADADOS ADICIONAIS
+# ============================================
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.cargo-edit]
+features = ["desktop", "full"]
+
+[package.metadata.cargo-release]
+allow-branch = ["main", "master"]
+sign-commit = true
+sign-tag = true
+tag-name = "v{{version}}"
+tag-message = "Release {{version}}"
+pre-release-commit-message = "chore: release {{version}}"
+pro-release-commit-message = "chore: bump version to {{version}}"
