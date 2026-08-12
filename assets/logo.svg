@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <!-- Fundo PS5 -->
+    <rect width="512" height="512" rx="80" fill="#003087"/>
+    
+    <!-- Texto ULTIMATE EDITION -->
+    <text x="256" y="200" font-family="Arial" font-size="60" font-weight="bold" 
+          fill="#FFFFFF" text-anchor="middle" letter-spacing="8">
+        ULTIMATE
+    </text>
+    
+    <!-- Texto EDITION -->
+    <text x="256" y="280" font-family="Arial" font-size="40" font-weight="bold" 
+          fill="#0060A0" text-anchor="middle" letter-spacing="12">
+        EDITION
+    </text>
+    
+    <!-- Símbolo PS5 -->
+    <circle cx="256" cy="256" r="180" fill="none" stroke="#FFFFFF" stroke-width="8" opacity="0.3"/>
+    
+    <!-- Logo PS -->
+    <text x="156" y="410" font-family="Arial" font-size="180" font-weight="bold" 
+          fill="#FFFFFF" text-anchor="middle" opacity="0.9">
+        PS
+    </text>
+    
+    <!-- Detalhes de brilho -->
+    <ellipse cx="120" cy="80" rx="120" ry="40" fill="rgba(255,255,255,0.08)"/>
+    
+    <!-- Estrela de destaque -->
+    <polygon points="400,80 410,110 440,110 415,130 425,160 400,140 375,160 385,130 360,110 390,110" 
+             fill="#FFD700" opacity="0.6"/>
+</svg>
