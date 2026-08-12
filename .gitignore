@@ -1,0 +1,174 @@
+# ============================================
+# RUST
+# ============================================
+
+# Compiled files
+/target/
+**/*.rs.bk
+*.pdb
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Rust build artifacts
+*.rlib
+*.prof
+*.gcda
+*.gcno
+*.profraw
+
+# Cargo lock (opcional - depende do projeto)
+# Cargo.lock
+
+# ============================================
+# IDE / EDITORES
+# ============================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+*.vscode
+
+# IntelliJ / CLion
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+*.un~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+
+# ============================================
+# SISTEMA OPERACIONAL
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*.tmp
+*.temp
+*.log
+
+# Windows
+*.dll
+*.exe
+*.sys
+*.cab
+*.msi
+*.msm
+
+# ============================================
+# PS5 EMULATOR ESPECÍFICO
+# ============================================
+
+# Jogos instalados (PKG)
+/games/
+*.pkg
+*.pkg.manifest
+
+# Saves
+/saves/
+*.save
+*.sav
+
+# Logs
+*.log
+logs/
+debug.log
+error.log
+
+# Dumps
+*.dump
+*.core
+*.dmp
+
+# Arquivos temporários do emulador
+*.tmp
+*.cache
+*.state
+
+# Dados de memória
+*.mem
+*.ram
+
+# ============================================
+# DEPENDÊNCIAS
+# ============================================
+
+# Node (se usar para algo)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Python (se usar scripts)
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+env/
+.env
+
+# ============================================
+# ARQUIVOS DE CONFIGURAÇÃO
+# ============================================
+
+# Config local
+.env.local
+.env.*.local
+*.local
+
+# ============================================
+# OUTROS
+# ============================================
+
+# Coverage
+*.gcov
+coverage/
+*.cov
+
+# Profiling
+*.prof
+*.profraw
+*.profdata
+
+# Benchmarks
+benches/
+*.bench
+
+# Documentação gerada
+docs/
+*.html
+*.pdf
+
+# Arquivos grandes
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+*.iso
+*.bin
