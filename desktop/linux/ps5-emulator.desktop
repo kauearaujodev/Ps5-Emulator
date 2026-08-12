@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=PS5 Emulator
+Comment=PlayStation 5 Virtual Emulator
+Exec=/usr/bin/ps5-emulator
+Icon=ps5-emulator
+Terminal=false
+Type=Application
+Categories=Game;Emulator;
